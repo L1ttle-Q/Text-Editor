@@ -31,13 +31,13 @@ private:
     Block* freeList;
     size_t blockSize;
     size_t blockCount;
-    static const size_t MaxSingleSize = 4095;
+    static const size_t MaxSingleSize = (1 << 15) - 1;
     // avoid always wasting a half of memory
 
 public:
     MemoryPool(size_t initSize = 7):
     freeList(nullptr), blockSize(sizeof(Block)), blockCount(initSize)
-    { }
+    { expandPool();}
 
     // virtual ~MemoryPool()
     // {
