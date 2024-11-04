@@ -69,9 +69,9 @@ public:
         AddElem();
         return true;
     }
-    bool AddChar(const char *s)
+    bool AddChar(const char *s, bool prev = true)
     {
-        bool fir = true;
+        bool fir = prev;
         for (int i = 0; i < strlen(s); i++)
         {
             if (fir) now->data.AddElemPrev(s[0]), fir = false;
@@ -79,8 +79,8 @@ public:
         }
         return true;
     }
-    bool AddChar(const std::string& s)
-    {return AddChar(s.c_str());}
+    bool AddChar(const std::string& s, bool prev = true)
+    {return AddChar(s.c_str(), prev);}
     bool DeleteRow(int op = 1)
     {
         return (DeleteElem(op) && (!isEmpty() || AddElem()));
@@ -153,7 +153,7 @@ public:
                     int dst = V[j] + j * (new_str.size() - s_len);
                     now->data.MoveTo(dst);
                     for (int k = 1; k <= s_len; k++) DeleteChar();
-                    AddChar(new_str);
+                    AddChar(new_str, now->data.now->next != now->data.tail);
                 }
                 PrintLine(stdout, i, &(now->data), ShowLineNumber, ShowCurrent);
             }

@@ -88,13 +88,11 @@ public:
         for (int i = 0; i <= l - length; i++)
         {
             int j = 0;
-            while (j < length && s[i + j] == pattern[j])
-                j++;
+            while (j + 1 <= length && s[i + j] == pattern[j + 1]) j++;
             if (j == length)
             {
                 res.emplace_back(i + 1);
-                if (!enableRepeat)
-                    i += length - 1;
+                i += (!enableRepeat) * (length - 1);
             }
         }
         return res;

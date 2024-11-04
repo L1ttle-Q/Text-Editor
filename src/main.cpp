@@ -55,7 +55,7 @@ void getOutputFile()
     bool Err = false;
     NoOutputFile = true;
 
-    fprintf(stderr, "Output to file? ");
+    fprintf(stdout, "Output to file? ");
     if (!getY_N()) return ;
 
     do
@@ -68,8 +68,8 @@ void getOutputFile()
         if (!fp)
         {
             Err = true;
-            fprintf(stderr, "File to write this file!\n");
-            fprintf(stderr, "Continue with no output file?");
+            fprintf(stdout, "Fail to write this file!\n");
+            fprintf(stdout, "Continue with no output file?");
             if (getY_N()) {Err = false; NoOutputFile = true;}
         }
         else fclose(fp);
@@ -78,19 +78,17 @@ void getOutputFile()
 
 bool getY_N()
 {
-    fprintf(stderr, "([Y]/[N]):");
-    char c; scanf(" %c", &c);
-    while (c != 'Y' && c != 'y' && c != 'N' && c != 'n')
-    {
-        fprintf(stderr, "([Y]/[N]):");
-        scanf(" %c", &c);
-    }
+    fprintf(stdout, "([Y]/[N]):");
+    char c; int read_end = 0;
+    while (~(read_end = scanf(" %c", &c)) && c != 'Y' && c != 'y' && c != 'N' && c != 'n')
+        fprintf(stdout, "([Y]/[N]):");
+    if (!~read_end) exit(1);
     return c == 'Y' || c == 'y';
 }
 
 void Init()
 {
-    fprintf(stderr, "Fill buffer with input file? ");
+    fprintf(stdout, "Fill buffer with input file? ");
     if (!getY_N())
     {
         EmptyBuf = true; Text = new TextEditor();
@@ -108,8 +106,8 @@ void Init()
         if (!in.DirectFile(input_file))
         {
             Err = true;
-            fprintf(stderr, "Fail to read this file!\n");
-            fprintf(stderr, "Continue with empty buffer?");
+            fprintf(stdout, "Fail to read this file!\n");
+            fprintf(stdout, "Continue with empty buffer?");
             if (getY_N()) {Err = false; EmptyBuf = true;}
         }
         EmptyBuf = false;
@@ -118,7 +116,8 @@ void Init()
     if (!EmptyBuf)
     {
         Text = new TextEditor(in);
-        fprintf(stdout, "Succeed to read!\n%s:\n", input_file);
+        // fprintf(stdout, "Succeed to read!\n%s:\n", input_file);
+        fprintf(stdout, "Succeed to read!\n");
     }
     else Text = new TextEditor();
 }
@@ -128,8 +127,9 @@ int op_cnt;
 void Process()
 {
     char op = '\0';
-    fprintf(stdout, "\nInput instruction(h for help, e for exit):\n");
-    scanf(" %c", &op);
+    int read_end = 0;
+    if (!op_cnt) fprintf(stdout, "\nInput instruction(h for help, e for exit):\n");
+    if (!~(read_end = scanf(" %c", &op))) exit(1);
     switch (op)
     {
         case 'h': // help
@@ -208,6 +208,7 @@ void Process()
             op_cnt = (getchar() == 'p');
             fprintf(stdout, "Input pattern string:\n");
             Text->Find<KMP>(getString(), op_cnt);
+            // Text->Find<NaiveSearch>(getString(), op_cnt);
             break;
 
         case 'b': // (dis)able line number display
@@ -237,10 +238,9 @@ void Process()
                 ungetc(op, stdin);
                 return ;
             }
-            else fprintf(stderr, "Wrong instruction, input again!\n");
+            else fprintf(stdout, "Wrong instruction, input again!\n");
     }
     op_cnt = 0;
-    Pair<int> p(Text->GetCurrentPos());
 }
 
 void Output()
@@ -256,7 +256,7 @@ int main()
     fprintf(stdout, "\nWelcome to high efficient text editor!(h for guidance)\n");
     Term = false;
     Init();
-    Text->PrintWholeText(stdout, ShowLineNumber); fprintf(stdout, "\n");
+    // Text->PrintWholeText(stdout, ShowLineNumber); fprintf(stdout, "\n");
     if (Term) return 0;
     while (!Term) Process();
     if (NoOutputFile) getOutputFile();
