@@ -8,6 +8,7 @@
 
 bool Term = false,
      EmptyBuf = true,
+     NoEcho = false,
      NoOutputFile = true,
      ShowLineNumber = true,
      ShowCurrent = true;
@@ -21,7 +22,7 @@ Guidance:\n\
 h/H: help               i/I: go up                j/J: go left\n\
 k/K: go down            l/L: go right             o: insert character(s)\n\
 O: insert line          q/Q: print full text      t/T: print current line\n\
-d: delete character(s)  D: delete line\n\
+d: delete character(s)  D: delete line            v/V: (dis)able echo\n\
 f: find pattern string   fp: replace all pattern string as new ones\n\
 b/B: (dis)able line number display\n\
 w/W: write to the output filee/E: exit\n\
@@ -214,6 +215,16 @@ void Process()
             ShowLineNumber ^= 1;
             fprintf(stdout, "Line number display has been %sabled!\n",
                     !ShowLineNumber ? "dis" : "");
+            break;
+        
+        case 'v':
+        case 'V':
+            NoEcho ^= 1;
+            fflush(stdout);
+            if (NoEcho) freopen(NULL_DEVICE, "w", stdout);
+            else freopen(DEVICE_OUT, "w", stdout);
+            fprintf(stdout, "Output echo has been %sabled!\n",
+                    NoEcho ? "dis" : "");
             break;
 
         default:

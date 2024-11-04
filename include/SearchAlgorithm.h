@@ -5,6 +5,13 @@
 #include <iostream>
 #include "globals.h"
 
+// template<typename T>
+// class SearchAlgorithm {
+// public:
+//     virtual ~SearchAlgorithm() = default;
+//     virtual std::vector<int> find(const T& s) = 0;
+// };
+
 class KMP
 {
 private:
@@ -30,6 +37,8 @@ public:
     }
     KMP(const std::string& s): KMP(s.c_str(), s.length()) {}
 
+    ~KMP() {delete[] pattern; delete[] kmp;}
+
     std::vector<int> find(const char *s, bool enableRepeat = false)
     {
         int l = strlen(s), j = 0;
@@ -52,5 +61,48 @@ public:
     {return find(s.c_str(), enableRepeat);}
 };
 
+class NaiveSearch
+{
+private:
+    char* pattern;
+    int length;
+
+public:
+    NaiveSearch() = delete;
+    NaiveSearch(const char *s, const int& l): length(l)
+    {
+        pattern = new char[length + 1];
+        memcpy(pattern + 1, s, sizeof(char) * length);
+    }
+    NaiveSearch(const std::string& s): NaiveSearch(s.c_str(), s.length()) {}
+
+    ~NaiveSearch()
+    {
+        delete[] pattern;
+    }
+
+    std::vector<int> find(const char *s, bool enableRepeat = false)
+    {
+        int l = strlen(s);
+        std::vector<int> res;
+        for (int i = 0; i <= l - length; i++)
+        {
+            int j = 0;
+            while (j < length && s[i + j] == pattern[j])
+                j++;
+            if (j == length)
+            {
+                res.emplace_back(i + 1);
+                if (!enableRepeat)
+                    i += length - 1;
+            }
+        }
+        return res;
+    }
+    std::vector<int> find(const std::string& s, bool enableRepeat = false)
+    {
+        return find(s.c_str(), enableRepeat);
+    }
+};
 
 #endif

@@ -1,6 +1,16 @@
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
 
+#include <iostream>
+
+#ifdef _WIN64
+    #define NULL_DEVICE "NUL"
+    #define DEVICE_OUT "CON"
+#else
+    #define NULL_DEVICE "/dev/null"
+    #define DEVICE_OUT "/dev/tty"
+#endif
+
 #define digit(x) (x >= '0' && x <= '9')
 
 // const int MaxRow = 2000;
@@ -51,7 +61,7 @@ static std::string getString(bool enableEmpty = false)
 
 extern const int MaxFileNameLength;
 
-extern bool Term, EmptyBuf, NoOutputFile, ShowLineNumber, ShowCurrent;
+extern bool Term, EmptyBuf, NoEcho, NoOutputFile, ShowLineNumber, ShowCurrent;
 
 extern char input_file[],
             output_file[];
